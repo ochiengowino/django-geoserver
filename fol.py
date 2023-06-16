@@ -8,8 +8,8 @@ import ee
 ee.Initialize()
 
 
-m = folium.Map(location=[1.2921,36.8219],
-               zoom_start=8
+m = folium.Map(location=[26.5236, 85.6750],
+               zoom_start=12
             #    tiles='Stamen Terrain'd
                )
 
@@ -84,22 +84,89 @@ plugins.MeasureControl(position='topright', primary_length_unit='meters', second
 
 
 # Define a method for displaying Earth Engine image tiles on a folium map.
-# def add_ee_layer(self, ee_object, vis_params, name):
-#     try:    
-#         # display ee.Image()
-#         if isinstance(ee_object, ee.image.Image):    
-#             map_id_dict = ee.Image(ee_object).getMapId(vis_params)
-#             folium.raster_layers.TileLayer(
-#             tiles = map_id_dict['tile_fetcher'].url_format,
-#             attr = 'Google Earth Engine',
-#             name = name,
-#             overlay = True,
-#             control = True
-#             ).add_to(self)
+def add_ee_layer(self, ee_object, vis_params, name):
+    try:    
+        # display ee.Image()
+        if isinstance(ee_object, ee.image.Image):    
+            map_id_dict = ee.Image(ee_object).getMapId(vis_params)
+            folium.raster_layers.TileLayer(
+            tiles = map_id_dict['tile_fetcher'].url_format,
+            attr = 'Google Earth Engine',
+            name = name,
+            overlay = True,
+            control = True
+            ).add_to(self)
+
+        # display ee.ImageCollection()
+        elif isinstance(ee_object, ee.imagecollection.ImageCollection):    
+            ee_object_new = ee_object.mosaic()
+            map_id_dict = ee.Image(ee_object_new).getMapId(vis_params)
+            folium.raster_layers.TileLayer(
+            tiles = map_id_dict['tile_fetcher'].url_format,
+            attr = 'Google Earth Engine',
+            name = name,
+            overlay = True,
+            control = True
+            ).add_to(self)
+
+        # display ee.Geometry()
+        elif isinstance(ee_object, ee.geometry.Geometry):    
+            folium.GeoJson(
+            data = ee_object.getInfo(),
+            name = name,
+            overlay = True,
+            control = True
+        ).add_to(self)
+
+        # display ee.FeatureCollection()
+        elif isinstance(ee_object, ee.featurecollection.FeatureCollection):  
+            ee_object_new = ee.Image().paint(ee_object, 0, 2)
+            map_id_dict = ee.Image(ee_object_new).getMapId(vis_params)
+            folium.raster_layers.TileLayer(
+            tiles = map_id_dict['tile_fetcher'].url_format,
+            attr = 'Google Earth Engine',
+            name = name,
+            overlay = True,
+            control = True
+        ).add_to(self)
+
+    except:
+        print("Could not display {}".format(name))
+
+    
+# Add EE drawing method to folium.
+folium.Map.add_ee_layer = add_ee_layer
+
+
+startdate = '2019-01-01'
+enddate = '2019-12-30'
+#sentinal DATA for NDVI
+S2 = ee.ImageCollection('COPERNICUS/S2').filterDate(startdate,enddate)
+
+#Function to calculate and add an NDVI band
+def addNDVI(image):
+    return image.addBands(image.normalizedDifference(['B8', 'B4']))
+
+
+#Add NDVI band to image collection
+S2 = S2.map(addNDVI)
+SentinalNdvi = S2.select('nd')
 
 
 
-#     except:
-#         print("Could not display {}".format(name))
+# Set visualization parameters.
+visParams = { 'min': 0.0,
+'max': 8000.0,
+'palette': [
+    'FFFFFF', 'CE7E45', 'DF923D', 'F1B555', 'FCD163', '99B718', '74A901',
+    '66A000', '529400', '3E8601', '207401', '056201', '004C00', '023B01',
+    '012E01', '011D01', '011301'
+],}
 
-m.save('fol1.html')
+
+# Add the data to the map object.
+m.add_ee_layer(SentinalNdvi, visParams , 'Sential NDVI')
+
+# Display the map.
+display(m)
+# m.save('fol2.html')
