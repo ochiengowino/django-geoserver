@@ -2,3 +2,19 @@
     height: 500px;
     width: 100%;
 }
+
+#export {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    z-index: 999;
+    background: white;
+    color: black;
+    padding: 6px;
+    border-radius: 4px;
+    font-family: 'Helvetica Neue';
+    cursor: pointer;
+    font-size: 12px;
+    text-decoration: none;
+    top: 90px;
+}

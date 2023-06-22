@@ -1,5 +1,6 @@
 import folium
 from folium import plugins
+import webbrowser
 
 #import module 
 import ee
@@ -7,14 +8,12 @@ import ee
 #intialize the google earth api
 ee.Initialize()
 
+figure = folium.Figure()
 
 m = folium.Map(location=[26.5236, 85.6750],
                zoom_start=12
             #    tiles='Stamen Terrain'd
                )
-
-
-
 
 
 
@@ -152,21 +151,19 @@ def addNDVI(image):
 S2 = S2.map(addNDVI)
 SentinalNdvi = S2.select('nd')
 
-
-
 # Set visualization parameters.
-visParams = { 'min': 0.0,
-'max': 8000.0,
-'palette': [
-    'FFFFFF', 'CE7E45', 'DF923D', 'F1B555', 'FCD163', '99B718', '74A901',
-    '66A000', '529400', '3E8601', '207401', '056201', '004C00', '023B01',
-    '012E01', '011D01', '011301'
-],}
+visParams = {'min': 0.0,
+            'max': 8000.0,
+            'palette': [
+                'FFFFFF', 'CE7E45', 'DF923D', 'F1B555', 'FCD163', '99B718', '74A901',
+                '66A000', '529400', '3E8601', '207401', '056201', '004C00', '023B01',
+                '012E01', '011D01', '011301'
+            ],}
 
 
 # Add the data to the map object.
 m.add_ee_layer(SentinalNdvi, visParams , 'Sential NDVI')
 
 # Display the map.
-display(m)
-# m.save('fol2.html')
+# display(m)
+m.save('fol2.html')

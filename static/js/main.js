@@ -42,3 +42,68 @@ $.getJSON(url, function(data){
     shops.addData(data)
 });
 
+
+L.control.fullscreen(
+    { "forceSeparateButton": false, "position": "topleft", "title": "Full Screen", "titleCancel": "Exit Full Screen" }
+).addTo(map);
+
+var locate_control = L.control.locate(
+    {}
+).addTo(map);
+
+
+var mouse_position = new L.Control.MousePosition(
+    { "emptyString": "Unavailable", "lngFirst": false, "numDigits": 5, "position": "topright", "prefix": "Mouse:", "separator": " | " }
+);
+mouse_position.options["latFormatter"] =
+    function (num) { return L.Util.formatNum(num, 3) + ' º '; };;
+mouse_position.options["lngFormatter"] =
+    function (num) { return L.Util.formatNum(num, 3) + ' º '; };;
+map.addControl(mouse_position);
+
+
+var options = {
+    position: "topleft",
+    draw: {},
+    edit: {},
+}
+// FeatureGroup is to store editable layers.
+var drawnItems = new L.featureGroup().addTo(
+    map
+);
+options.edit.featureGroup = drawnItems;
+var draw_control = new L.Control.Draw(
+    options
+).addTo(map);
+map.on(L.Draw.Event.CREATED, function (e) {
+    var layer = e.layer,
+        type = e.layerType;
+    var coords = JSON.stringify(layer.toGeoJSON());
+    layer.on('click', function () {
+        alert(coords);
+        console.log(coords);
+    });
+    drawnItems.addLayer(layer);
+});
+map.on('draw:created', function (e) {
+    drawnItems.addLayer(e.layer);
+});
+
+var measure_control = new L.Control.Measure(
+    { "position": "topright", "primaryAreaUnit": "sqmeters", "primaryLengthUnit": "meters", "secondaryAreaUnit": "acres", "secondaryLengthUnit": "miles" });
+map.addControl(measure_control);
+
+document.getElementById('export').onclick = function (e) {
+    var data = drawnItems.toGeoJSON();
+    var convertedData = 'text/json;charset=utf-8,'
+        + encodeURIComponent(JSON.stringify(data));
+    document.getElementById('export').setAttribute(
+        'href', 'data:' + convertedData
+    );
+    document.getElementById('export').setAttribute(
+        'download', "data.geojson"
+    );
+}
+
+
+
