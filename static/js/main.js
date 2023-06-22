@@ -1,27 +1,40 @@
 
-
+var map = L.map('map', {
+    zoom: 7,
+    center: [1.2921, 36.8219],
+    // layers: [osm_layer, google_hybrid],
+    // maxBounds: bounds,
+    maxZoom: 20,
+    minZoom: 2
+});
 
 var osm_layer= L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-});
-var b1 = L.latLng(-33.382131, -13.271524);
-var b2 = L.latLng(44.678009, 58.172128);
-var bounds = L.latLngBounds(b1, b2);
+}).addTo(map);
+var google_hybrid = L.tileLayer(
+    "https://mt1.google.com/vt/lyrs=y\u0026x={x}\u0026y={y}\u0026z={z}",
+    { "attribution": "Google", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false }
+);
 
-// var map1 = L.map('map').setView([1.2921, 36.8219], 8);
-var map = L.map('map',{
-    zoom:8,
-    center: [1.2921, 36.8219],
-    layers: [osm_layer],
-    maxBounds:bounds,
-    maxZoom:20,
-    minZoom:2
-});
-map.fitBounds([
-    [-33.382131, -13.271524],
-    [44.678009, 58.172128]
-]);
+
+var baseLayers = {
+    "OSM": osm_layer,
+    "Hybrid": google_hybrid
+};
+
+L.control.layers(baseLayers).addTo(map);
+
+// var b1 = L.latLng(-33.382131, -13.271524);
+// var b2 = L.latLng(44.678009, 58.172128);
+// var bounds = L.latLngBounds(b1, b2);
+
+// // var map1 = L.map('map').setView([1.2921, 36.8219], 8);
+
+// map.fitBounds([
+//     [-33.382131, -13.271524],
+//     [44.678009, 58.172128]
+// ]);
 // var geojson1 = '{{view.shop|safe}}'
 // var geojson_valid = JSON.parse(geojson1)
 // var shops = L.geoJson(geojson_valid,{
