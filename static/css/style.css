@@ -1,6 +1,14 @@
+   body {
+       padding: 0;
+       margin: 0;
+   }
+
+html,
+body,
 #map{
-    height: 500px;
+    height: 100%;
     width: 100%;
+    bottom: 0;
 }
 
 #export {
@@ -10,7 +18,11 @@
     z-index: 999;
     background: white;
     color: black;
-    padding: 6px;
+    position: relative;
+        width: 100.0%;
+        height: 100.0%;
+        left: 0.0%;
+        top: 0.0%;adding: 6px;
     border-radius: 4px;
     font-family: 'Helvetica Neue';
     cursor: pointer;
