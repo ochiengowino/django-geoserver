@@ -22,7 +22,8 @@ body,
         width: 100.0%;
         height: 100.0%;
         left: 0.0%;
-        top: 0.0%;adding: 6px;
+        top: 0.0%;
+        padding: 6px;
     border-radius: 4px;
     font-family: 'Helvetica Neue';
     cursor: pointer;

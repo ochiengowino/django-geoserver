@@ -25,6 +25,19 @@ var baseLayers = {
 
 L.control.layers(baseLayers).addTo(map);
 
+var kenya_srtm = L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
+    layers: 'Nzoia:Kenya_SRTM_layer',
+    format: 'image/png',
+    transparent: true,
+    version: '1.1.0',
+    attribution: "SRTM layer"
+});
+kenya_srtm.addTo(map);
+
+var kenya_counties = L.Geoserver.wfs("http://localhost:8080/geoserver/wfs", {
+    layers: "Nzoia:Counties",
+});
+kenya_counties.addTo(map);
 // var b1 = L.latLng(-33.382131, -13.271524);
 // var b2 = L.latLng(44.678009, 58.172128);
 // var bounds = L.latLngBounds(b1, b2);
@@ -88,6 +101,7 @@ options.edit.featureGroup = drawnItems;
 var draw_control = new L.Control.Draw(
     options
 ).addTo(map);
+
 map.on(L.Draw.Event.CREATED, function (e) {
     var layer = e.layer,
         type = e.layerType;
