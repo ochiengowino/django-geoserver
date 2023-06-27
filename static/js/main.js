@@ -23,7 +23,7 @@ var baseLayers = {
     "Hybrid": google_hybrid
 };
 
-L.control.layers(baseLayers).addTo(map);
+
 
 var kenya_srtm = L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
     layers: 'Nzoia:Kenya_SRTM_layer',
@@ -37,7 +37,46 @@ kenya_srtm.addTo(map);
 var kenya_counties = L.Geoserver.wfs("http://localhost:8080/geoserver/wfs", {
     layers: "Nzoia:Counties",
 });
-kenya_counties.addTo(map);
+// kenya_counties.addTo(map);
+
+$.ajax('http://localhost:8080/geoserver/wfs', {
+    type: 'GET',
+    data: {
+        service: 'WFS',
+        version: '1.1.0',
+        request: 'GetFeature',
+        typename: 'Nzoia:Counties',
+        srsname: 'EPSG:4326',
+        outputFormat: 'text/javascript',
+    },
+    dataType: 'jsonp',
+    jsonpCallback: 'callback:handleJson',
+    jsonp: 'format_options'
+});
+
+//Geojson style file
+var myStyle = {
+    'color': 'red'
+}
+
+// the ajax callback function
+function handleJson(data) {
+    selectedArea = L.geoJson(data, {
+        style: myStyle,
+        onEachFeature: function (feature, layer) {
+            // layer.bindPopup(`Name: ${feature.properties.name_of_your_property}`)
+            console.log(feature.properties)
+        }
+    }).addTo(map);
+    // map.fitBounds(selectedArea.getBounds());s
+}
+
+var overlays = {
+    "Kenya Counties":kenya_counties,
+    "kenya SRTM": kenya_srtm
+}
+
+L.control.layers(baseLayers, overlays).addTo(map);
 // var b1 = L.latLng(-33.382131, -13.271524);
 // var b2 = L.latLng(44.678009, 58.172128);
 // var bounds = L.latLngBounds(b1, b2);
