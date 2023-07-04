@@ -35,17 +35,17 @@ var kenya_srtm = L.tileLayer.wms("http://localhost:8080/geoserver/wms", {
 kenya_srtm.addTo(map);
 
 var kenya_counties = L.Geoserver.wfs("http://localhost:8080/geoserver/wfs", {
-    layers: "Nzoia:Counties",
+    layers: "Nzoia:County",
 });
 // kenya_counties.addTo(map);
-
-$.ajax('http://localhost:8080/geoserver/wfs', {
+// console.log(kenya_counties)
+ $.ajax('http://localhost:8080/geoserver/wfs', {
     type: 'GET',
     data: {
         service: 'WFS',
         version: '1.1.0',
         request: 'GetFeature',
-        typename: 'Nzoia:Counties',
+        typename: 'Nzoia:County',
         srsname: 'EPSG:4326',
         outputFormat: 'text/javascript',
     },
@@ -64,15 +64,15 @@ function handleJson(data) {
     selectedArea = L.geoJson(data, {
         style: myStyle,
         onEachFeature: function (feature, layer) {
-            // layer.bindPopup(`Name: ${feature.properties.name_of_your_property}`)
-            console.log(feature.properties)
+            layer.bindPopup(`Name: ${feature.properties.COUNTY}`)
+            // console.log(feature.properties)
         }
     }).addTo(map);
     // map.fitBounds(selectedArea.getBounds());s
 }
 
 var overlays = {
-    "Kenya Counties":kenya_counties,
+    "Kenya Counties": kenya_counties,
     "kenya SRTM": kenya_srtm
 }
 
