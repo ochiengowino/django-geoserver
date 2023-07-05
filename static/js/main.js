@@ -37,42 +37,91 @@ kenya_srtm.addTo(map);
 var kenya_counties = L.Geoserver.wfs("http://localhost:8080/geoserver/wfs", {
     layers: "Nzoia:County",
 });
-// kenya_counties.addTo(map);
 // console.log(kenya_counties)
- $.ajax('http://localhost:8080/geoserver/wfs', {
-    type: 'GET',
-    data: {
-        service: 'WFS',
-        version: '1.1.0',
-        request: 'GetFeature',
-        typename: 'Nzoia:County',
-        srsname: 'EPSG:4326',
-        outputFormat: 'text/javascript',
+var root_url = 'http://localhost:8080/geoserver/wfs';
+
+var defaultParameters = {
+
+    service: 'WFS',
+    version: '1.1.0',
+    request: 'GetFeature',
+    typeName: 'Nzoia:County',
+    outputFormat: 'application/json',
+    format_options: 'callback:getJson',
+    SrsName: 'EPSG:4326'
+};
+
+var parametres = L.Util.extend(defaultParameters);
+
+var URL = root_url + L.Util.getParamString(parametres);
+
+var counties_layer = L.geoJson(null, {
+    style: function (feature) {
+        return {
+            stroke: true,
+            // fillColor: '#B04173',
+            // fillOpacity: 2,
+            color: '#000000',
+            weight: 1,
+        };
     },
-    dataType: 'jsonp',
-    jsonpCallback: 'callback:handleJson',
-    jsonp: 'format_options'
+    onEachFeature: function (feature, layer) {
+    layer.bindPopup(`Name: ${feature.properties.COUNTY}`)
+    // console.log(feature)
+    }
 });
 
+
+$.ajax({
+    type: 'GET',
+    url: URL,
+    // dataType: 'jsonp',
+    dataType: 'json',
+    jsonpCallback: 'getJson',
+    success: function (response) {
+        // console.log(response)
+        counties_layer.addData(response)
+        counties_layer.addTo(map)
+    }
+});
+//  $.ajax('http://localhost:8080/geoserver/wfs', {
+//     type: 'GET',
+//     data: {
+//         service: 'WFS',
+//         version: '1.1.0',
+//         request: 'GetFeature',
+//         typename: 'Nzoia:County',
+//         srsname: 'EPSG:4326',
+//         outputFormat: 'text/javascript',
+//     },
+//     dataType: 'jsonp',
+//     // jsonpCallback: 'callback:handleJson',
+//     jsonp: 'format_options',
+//     success: function(response){
+//         selectedArea1.addData(response)
+//         selectedArea1.addTo(map)
+//     }
+// });
+
 //Geojson style file
-var myStyle = {
-    'color': 'red'
-}
+// var myStyle = {
+//     'color': 'red'
+// }
 
 // the ajax callback function
-function handleJson(data) {
-    selectedArea = L.geoJson(data, {
-        style: myStyle,
-        onEachFeature: function (feature, layer) {
-            layer.bindPopup(`Name: ${feature.properties.COUNTY}`)
-            // console.log(feature.properties)
-        }
-    }).addTo(map);
-    // map.fitBounds(selectedArea.getBounds());s
-}
-
+// function handleJson(data) {
+//     selectedArea = new L.geoJson(data, {
+//         style: myStyle,
+//         onEachFeature: function (feature, layer) {
+//             layer.bindPopup(`Name: ${feature.properties.COUNTY}`)
+//             // console.log(feature.properties)
+//         }
+//     }).addTo(map);
+//     // map.fitBounds(selectedArea.getBounds());s
+// }
+// console.log(selectedArea)
 var overlays = {
-    "Kenya Counties": kenya_counties,
+    "Kenya Counties": counties_layer,
     "kenya SRTM": kenya_srtm
 }
 
