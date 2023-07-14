@@ -120,6 +120,52 @@ $.ajax({
 //     // map.fitBounds(selectedArea.getBounds());s
 // }
 // console.log(selectedArea)
+
+
+var layerLegend = L.Geoserver.legend("http://localhost:8080/geoserver/wms", {
+    layers: "Nzoia:Kenya_SRTM_layer",
+    style: `Nzoia:srtm3`,
+});
+
+// layerLegend.addTo(map);
+// var legend;
+
+// $("#select-sld").change(function () {
+//     var selectId = $("#select-sld option:selected").val();
+//     var getSLD = [];
+
+//     for (var i in data) {
+//         if (data[i].id == selectId) {
+//             getSLD += data[i].nom;
+//             if (data[i].id != selectId) {
+//                 return false;
+//             }
+//         }
+//     };
+
+//     secteur.setParams({ styles: getSLD });
+//     console.log(secteur.wmsParams.styles);
+
+//     $('#result-select-sld').html(getSLD);
+
+//     if (legend instanceof L.Control) { map2.removeControl(legend); }
+
+
+// });
+var legend;
+legend = L.control({ position: 'bottomright' });
+
+legend.onAdd = function (map) {
+    var div = [];
+    div = L.DomUtil.create('div', 'info legend');
+    var url = 'http://localhost:8080/geoserver/wms?REQUEST=GetLegendGraphic&VERSION=1.0.0&FORMAT=image/png&WIDTH=20&HEIGHT=20&LAYER=Nzoia:Kenya_SRTM_layer&STYLE=Nzoia:srtm3';
+    div.innerHTML += '<img src=' + url + ' alt="legend" width="90" height="240">';
+
+    return div;
+
+};
+
+legend.addTo(map);
 var overlays = {
     "Kenya Counties": counties_layer,
     "kenya SRTM": kenya_srtm

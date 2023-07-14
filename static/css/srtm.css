@@ -7,3 +7,27 @@ body{
     height: 100vh;
     width: 100%;
 }
+
+
+#export {
+    position: absolute;
+    top: 160px;
+    /* top: 0; */
+    right: 10px;
+    /* right: 10px; */
+    z-index: 999;
+    background: white;
+    color: black;
+    /* position: relative; */
+    /* width: 100.0%;
+    height: 100.0%; */
+    /* left: 0.0%; */
+    /* top: 0.0%; */
+    padding: 6px;
+    border-radius: 4px;
+    font-family: 'Helvetica Neue';
+    cursor: pointer;
+    font-size: 12px;
+    text-decoration: none;
+ 
+}
