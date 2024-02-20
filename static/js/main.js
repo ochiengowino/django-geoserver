@@ -41,7 +41,6 @@ var kenya_counties = L.Geoserver.wfs("http://localhost:8080/geoserver/wfs", {
 var root_url = 'http://localhost:8080/geoserver/wfs';
 
 var defaultParameters = {
-
     service: 'WFS',
     version: '1.1.0',
     request: 'GetFeature',
